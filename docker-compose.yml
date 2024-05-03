@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  web_service:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+    image: support_web
+    command: /start
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    env_file:
+      - env/.env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    container_name: restaurant_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=support
+      - POSTGRES_PASSWORD=1253
+    ports:
+      - "5432:5432"
+
+  support_bot:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+    image: support_bot
+    command: python /app/SupportBot/main.py
+    volumes:
+      - .:/app
+    env_file:
+      - env/.env
+    depends_on:
+      - db
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/nginx/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web_service
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+volumes:
+  media_volume:
+  static_volume:
+  postgres_data:
