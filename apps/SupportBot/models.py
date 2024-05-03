@@ -18,7 +18,7 @@ class BotUsers(AbstractBaseModel):
     username = models.CharField(max_length=255, null=True, blank=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
-    phone = models.BigIntegerField(max_length=100, null=True, blank=True)
+    phone = models.BigIntegerField(null=True, blank=True)
     language_code = models.CharField(max_length=10, choices=LANGUAGE_CODE, default="uz")
     is_active = models.BooleanField(default=True)
     role = models.CharField(max_length=10, choices=USER_ROLE, default="user")
