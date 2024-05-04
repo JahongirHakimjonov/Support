@@ -123,7 +123,8 @@ async def send_welcome(message: types.Message):
     keyboard.add(button_website)
 
     if user_id in get_admin_ids():
-        await message.reply("Salom! Jahongir aka botga xush kelibsiz.")
+        await message.reply(f"Salom Admin [{first_name}](tg://user?id={user_id})!\nbotga xush kelibsiz.",
+                            reply_markup=keyboard, parse_mode="Markdown")
     else:
         await message.reply(
             f"Salom [{first_name}](tg://user?id={user_id})! Talab va takliflaringiz bo‘lsa, ularni yuboring. \nBarcha gapingizni 1ta xabarda yozing.  "
