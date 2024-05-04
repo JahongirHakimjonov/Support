@@ -132,7 +132,8 @@ async def send_welcome(message: types.Message):
         )
     else:
         await message.reply(
-            f"Salom [{first_name}](tg://user?id={user_id})! Talab va takliflaringiz bo‘lsa, ularni yuboring. \nBarcha gapingizni 1ta xabarda yozing.  "
+            f"Salom [{first_name}](tg://user?id={user_id})! Talab va takliflaringiz bo‘lsa, ularni yuboring. \nBarcha "
+            f"gapingizni 1ta xabarda yozing."
             "\n\nDiqqat!, xabar faqat tekst ko‘rinishida bo‘lishi kerak. Rasm, video va boshqa formatdagi fayllar "
             "qabul qilinmaydi.",
             reply_markup=keyboard,
@@ -222,7 +223,8 @@ async def handle_message(message: types.Message):
         # This is the first message of the day, insert a new row
 
         c.execute(
-            "INSERT INTO daily_message (telegram_id, message_date, message_count, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)",
+            "INSERT INTO daily_message (telegram_id, message_date, message_count, created_at, updated_at) VALUES (%s, "
+            "%s, %s, %s, %s)",
             (
                 message.from_user.id,
                 datetime.now().date(),
@@ -361,7 +363,10 @@ async def handle_admin_reply(message: types.Message, state: FSMContext):
 @dp.message_handler(commands=["about"])
 async def about_command(message: types.Message):
     # Assuming `conn` is your database connection and `c` is the cursor
-    c.execute("SELECT * FROM about")
+    c.execute(
+        "SELECT  full_name, date, age, info, image, resume_link, github_link, portfolio_link, linkedin_link, "
+        "instagram_link, telegram_link FROM about"
+    )
     about_info = c.fetchone()
     if about_info:
         about_message = (
