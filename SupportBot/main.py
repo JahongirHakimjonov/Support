@@ -170,9 +170,10 @@ async def about_command(message: types.Message):
 
         if about_info.get('image'):
             try:
-                rasm = os.path.join(os.path.dirname(__file__), f"../media/{about_info['image']}")
+                base_dir = os.path.dirname(os.path.abspath(__file__))
+                image_path = os.path.join(base_dir, f"media/{about_info['image']}")
 
-                with open(rasm, 'rb') as photo:
+                with open(image_path, 'rb') as photo:
                     await bot.send_photo(
                         chat_id=message.chat.id,
                         photo=photo,
