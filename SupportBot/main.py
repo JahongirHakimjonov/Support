@@ -170,7 +170,7 @@ async def about_command(message: types.Message):
 
         if about_info.get('image'):
             try:
-                image_path = os.path.join(f"app/media/{about_info['image']}")
+                image_path = os.path.join(f"media/{about_info['image']}")
 
                 with open(image_path, 'rb') as photo:
                     await bot.send_photo(
