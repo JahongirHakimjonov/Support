@@ -21,6 +21,8 @@ from dotenv import load_dotenv, find_dotenv
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from psycopg2.extras import DictCursor
 
+from apps.web.models import About
+
 load_dotenv(find_dotenv("env/.env"))
 
 API_TOKEN = os.getenv("BOT_TOKEN")
@@ -356,6 +358,31 @@ async def handle_admin_reply(message: types.Message, state: FSMContext):
                 "Xatolik: Foydalanuvchi topilmadi. Iltimos, qaytadan urinib ko'ring.",
             )
         await state.finish()
+
+
+@dp.message_handler(commands=['about'])
+async def about_command(message: types.Message):
+    about_info = About.objects.first()  # Get the first (and probably only) About object
+
+    if about_info:
+        # Format the information into a message
+        about_message = f"""
+        Full Name: {about_info.full_name}
+        Date: {about_info.date}
+        Age: {about_info.age}
+        Info: {about_info.info}
+        Resume Link: {about_info.resume_link}
+        Github Link: {about_info.github_link}
+        Portfolio Link: {about_info.portfolio_link}
+        LinkedIn Link: {about_info.linkedin_link}
+        Instagram Link: {about_info.instagram_link}
+        Telegram Link: {about_info.telegram_link}
+        """
+
+        # Send the message
+        await bot.send_message(chat_id=message.chat.id, text=about_message)
+    else:
+        await bot.send_message(chat_id=message.chat.id, text="No information available.")
 
 
 if __name__ == "__main__":

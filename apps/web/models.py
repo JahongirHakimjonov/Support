@@ -26,3 +26,25 @@ class Home(AbstractBaseModel):
 
     def __str__(self):
         return self.name
+
+
+class About(AbstractBaseModel):
+    full_name = models.CharField(max_length=255)
+    date = models.DateField()
+    age = models.IntegerField()
+    info = models.TextField()
+    image = models.ImageField(upload_to="about/")
+    resume_link = models.URLField()
+    github_link = models.URLField()
+    portfolio_link = models.URLField()
+    linkedin_link = models.URLField()
+    instagram_link = models.URLField()
+    telegram_link = models.URLField()
+
+    class Meta:
+        verbose_name = "About"
+        verbose_name_plural = "About"
+        db_table = "about"
+
+    def __str__(self):
+        return self.full_name
