@@ -13,7 +13,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.exceptions import (
     BotBlocked,
     ChatNotFound,
-    UserDeactivated,
+    UserDeactivated, BadRequest,
 )
 from aiogram.utils.exceptions import TelegramAPIError
 from aiohttp.client_exceptions import ClientConnectorError
@@ -165,12 +165,18 @@ async def about_command(message: types.Message):
 
         # Send the message with a photo if an image URL exists
         if "image" in about_info and about_info["image"]:
-            await bot.send_photo(
-                chat_id=message.chat.id,
-                photo=about_info["image"],
-                caption=about_message,
-                parse_mode="Markdown",
-            )
+            try:
+                await bot.send_photo(
+                    chat_id=message.chat.id,
+                    photo=about_info["image"],
+                    caption=about_message,
+                    parse_mode="Markdown",
+                )
+            except BadRequest as e:
+                logging.warning(f"Invalid or inaccessible URL: {about_info['image']}")
+                await bot.send_message(
+                    chat_id=message.chat.id, text=about_message, parse_mode="Markdown"
+                )
         else:
             await bot.send_message(
                 chat_id=message.chat.id, text=about_message, parse_mode="Markdown"
