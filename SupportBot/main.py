@@ -21,8 +21,6 @@ from dotenv import load_dotenv, find_dotenv
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from psycopg2.extras import DictCursor
 
-from apps.web.models import About
-
 load_dotenv(find_dotenv("env/.env"))
 
 API_TOKEN = os.getenv("BOT_TOKEN")
@@ -362,25 +360,23 @@ async def handle_admin_reply(message: types.Message, state: FSMContext):
 
 @dp.message_handler(commands=['about'])
 async def about_command(message: types.Message):
-    about_info = About.objects.first()  # Get the first (and probably only) About object
-
+    c.execute("SELECT * FROM about")
+    about_info = c.fetchone()
     if about_info:
-        # Format the information into a message
-        about_message = f"""
-        Full Name: {about_info.full_name}
-        Date: {about_info.date}
-        Age: {about_info.age}
-        Info: {about_info.info}
-        Resume Link: {about_info.resume_link}
-        Github Link: {about_info.github_link}
-        Portfolio Link: {about_info.portfolio_link}
-        LinkedIn Link: {about_info.linkedin_link}
-        Instagram Link: {about_info.instagram_link}
-        Telegram Link: {about_info.telegram_link}
-        """
+        about_message = f"Full Name: {about_info['full_name']}\n" \
+                        f"Date: {about_info['date']}\n" \
+                        f"Age: {about_info['age']}\n" \
+                        f"Info: {about_info['info']}\n" \
+                        f"Resume Link: {about_info['resume_link']}\n" \
+                        f"Github Link: {about_info['github_link']}\n" \
+                        f"Portfolio Link: {about_info['portfolio_link']}\n" \
+                        f"Linkedin Link: {about_info['linkedin_link']}\n" \
+                        f"Instagram Link: {about_info['instagram_link']}\n" \
+                        f"Telegram Link: {about_info['telegram_link']}"
 
         # Send the message
-        await bot.send_message(chat_id=message.chat.id, text=about_message)
+        await bot.send_photo(chat_id=message.chat.id, photo=about_info['image'], caption=about_message,
+                             parse_mode="Markdown")
     else:
         await bot.send_message(chat_id=message.chat.id, text="No information available.")
 
