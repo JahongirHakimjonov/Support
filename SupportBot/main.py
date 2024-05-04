@@ -358,27 +358,41 @@ async def handle_admin_reply(message: types.Message, state: FSMContext):
         await state.finish()
 
 
-@dp.message_handler(commands=['about'])
+@dp.message_handler(commands=["about"])
 async def about_command(message: types.Message):
+    # Assuming `conn` is your database connection and `c` is the cursor
     c.execute("SELECT * FROM about")
     about_info = c.fetchone()
     if about_info:
-        about_message = f"Full Name: {about_info['full_name']}\n" \
-                        f"Date: {about_info['date']}\n" \
-                        f"Age: {about_info['age']}\n" \
-                        f"Info: {about_info['info']}\n" \
-                        f"Resume Link: {about_info['resume_link']}\n" \
-                        f"Github Link: {about_info['github_link']}\n" \
-                        f"Portfolio Link: {about_info['portfolio_link']}\n" \
-                        f"Linkedin Link: {about_info['linkedin_link']}\n" \
-                        f"Instagram Link: {about_info['instagram_link']}\n" \
-                        f"Telegram Link: {about_info['telegram_link']}"
+        about_message = (
+            f"Full Name: {about_info['full_name']}\n"
+            f"Date: {about_info['date']}\n"
+            f"Age: {about_info['age']}\n"
+            f"Info: {about_info['info']}\n"
+            f"Resume Link: {about_info['resume_link']}\n"
+            f"Github Link: {about_info['github_link']}\n"
+            f"Portfolio Link: {about_info['portfolio_link']}\n"
+            f"Linkedin Link: {about_info['linkedin_link']}\n"
+            f"Instagram Link: {about_info['instagram_link']}\n"
+            f"Telegram Link: {about_info['telegram_link']}"
+        )
 
-        # Send the message
-        await bot.send_photo(chat_id=message.chat.id, photo=about_info['image'], caption=about_message,
-                             parse_mode="Markdown")
+        # Send the message with a photo if an image URL exists
+        if "image" in about_info and about_info["image"]:
+            await bot.send_photo(
+                chat_id=message.chat.id,
+                photo=about_info["image"],
+                caption=about_message,
+                parse_mode="Markdown",
+            )
+        else:
+            await bot.send_message(
+                chat_id=message.chat.id, text=about_message, parse_mode="Markdown"
+            )
     else:
-        await bot.send_message(chat_id=message.chat.id, text="No information available.")
+        await bot.send_message(
+            chat_id=message.chat.id, text="No information available."
+        )
 
 
 if __name__ == "__main__":
