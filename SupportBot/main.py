@@ -119,17 +119,24 @@ async def send_welcome(message: types.Message):
 
     conn.commit()
     keyboard = InlineKeyboardMarkup()
-    button_website = InlineKeyboardButton("Bizning kanalimiz", url="https://t.me/jakhangir_blog")
+    button_website = InlineKeyboardButton(
+        "Bizning kanalimiz", url="https://t.me/jakhangir_blog"
+    )
     keyboard.add(button_website)
 
     if user_id in get_admin_ids():
-        await message.reply(f"Salom Admin [{first_name}](tg://user?id={user_id})!\nbotga xush kelibsiz.",
-                            reply_markup=keyboard, parse_mode="Markdown")
+        await message.reply(
+            f"Salom Admin [{first_name}](tg://user?id={user_id})!\nbotga xush kelibsiz.",
+            reply_markup=keyboard,
+            parse_mode="Markdown",
+        )
     else:
         await message.reply(
             f"Salom [{first_name}](tg://user?id={user_id})! Talab va takliflaringiz bo‘lsa, ularni yuboring. \nBarcha gapingizni 1ta xabarda yozing.  "
             "\n\nDiqqat!, xabar faqat tekst ko‘rinishida bo‘lishi kerak. Rasm, video va boshqa formatdagi fayllar "
-            "qabul qilinmaydi.", reply_markup=keyboard, parse_mode="Markdown"
+            "qabul qilinmaydi.",
+            reply_markup=keyboard,
+            parse_mode="Markdown",
         )
 
 
@@ -141,7 +148,9 @@ class News(StatesGroup):
 async def send_news(message: types.Message):
     if message.from_user.id in get_admin_ids():
         await News.waiting_for_news.set()
-        await message.reply("Xabarni yuboring. Xabarni yuborishni bekor qilish uchun /cancel ni bosing.")
+        await message.reply(
+            "Xabarni yuboring. Xabarni yuborishni bekor qilish uchun /cancel ni bosing."
+        )
     else:
         await message.reply("Siz admin emassiz dib ettimu!!!")
 
@@ -151,7 +160,7 @@ async def send_news(message: types.Message):
 async def handle_news(message: types.Message, state: FSMContext):
     if message.text == "/cancel":
         await state.finish()
-        await message.reply("Operation cancelled.")
+        await message.reply("Yangilik yuborish bekor qilindi")
     elif message.from_user.id in get_admin_ids():
         # Get all users from the database
         c.execute("SELECT telegram_id FROM bot_users WHERE telegram_id IS NOT NULL")
@@ -178,7 +187,9 @@ async def handle_news(message: types.Message, state: FSMContext):
             try:
                 await bot.send_message(admin_id, "Xabaringiz yuborildi.")
             except Exception as e:
-                logging.error(f"Error occurred while sending message to admin {admin_id}: {e}")
+                logging.error(
+                    f"Error occurred while sending message to admin {admin_id}: {e}"
+                )
 
 
 # Respond to message
@@ -212,7 +223,13 @@ async def handle_message(message: types.Message):
 
         c.execute(
             "INSERT INTO daily_message (telegram_id, message_date, message_count, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)",
-            (message.from_user.id, datetime.now().date(), 1, datetime.now(), datetime.now())
+            (
+                message.from_user.id,
+                datetime.now().date(),
+                1,
+                datetime.now(),
+                datetime.now(),
+            ),
         )
         conn.commit()
     elif result[0] < 10:
@@ -242,7 +259,7 @@ async def handle_message(message: types.Message):
                 group_id,
                 f"Foydalanuvchi: {user_name}\nId: {user_id}\nXabar: {message_text}",
                 reply_markup=keyboard,
-                parse_mode="MarkdownV2"
+                parse_mode="MarkdownV2",
             )
         await message.reply("Xabaringiz qabul qilindi. Javobni kuting.")
     except BotBlocked:
@@ -323,9 +340,7 @@ async def handle_admin_reply(message: types.Message, state: FSMContext):
         except BotBlocked:
             logging.warning(f"Bot was blocked by the user {user_id}")
             for group_id in get_group_ids():
-                await bot.send_message(
-                    group_id, "Foydalanuvchi botni blokladi."
-                )
+                await bot.send_message(group_id, "Foydalanuvchi botni blokladi.")
             await state.finish()
         except Exception as e:
             logging.error(f"Error occurred: {e}")

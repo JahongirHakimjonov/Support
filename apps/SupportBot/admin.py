@@ -1,6 +1,11 @@
 from django.contrib import admin
 
-from apps.SupportBot.models import BotUsers, DailyMessages, TelegramChannelID, TelegramGroupID
+from apps.SupportBot.models import (
+    BotUsers,
+    DailyMessages,
+    TelegramChannelID,
+    TelegramGroupID,
+)
 
 
 @admin.register(BotUsers)

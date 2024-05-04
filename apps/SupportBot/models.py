@@ -5,7 +5,7 @@ from apps.shared.models import AbstractBaseModel
 class BotUsers(AbstractBaseModel):
     USER_ROLE = (
         ("admin", "Admin"),
-        ('moderator', 'Moderator'),
+        ("moderator", "Moderator"),
         ("user", "User"),
     )
     LANGUAGE_CODE = (
