@@ -194,6 +194,7 @@ JAZZMIN_SETTINGS = {
         "web": "fas fa-globe",
         "web.Home": "fas fa-home",
         "web.About": "fas fa-info-circle",
+        "web.SiteUsers": "fas fa-users",
         "SupportBot": "fas fa-robot",
         "SupportBot.BotUsers": "fas fa-robot",
         "SupportBot.TelegramGroupID": "fas fa-users",
