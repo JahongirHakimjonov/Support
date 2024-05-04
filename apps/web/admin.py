@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.web.models import Home, About
+from apps.web.models import Home, About, SiteUsers
 
 
 @admin.register(Home)
@@ -12,3 +12,9 @@ class HomeAdmin(admin.ModelAdmin):
 class AboutAdmin(admin.ModelAdmin):
     list_display = ("full_name", "date", "age", "info")
     search_fields = ("full_name",)
+
+
+@admin.register(SiteUsers)
+class SiteUsersAdmin(admin.ModelAdmin):
+    list_display = ("useremail",)
+    search_fields = ("useremail",)

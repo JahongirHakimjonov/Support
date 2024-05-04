@@ -48,3 +48,14 @@ class About(AbstractBaseModel):
 
     def __str__(self):
         return self.full_name
+
+
+class SiteUsers(AbstractBaseModel):
+    useremail = models.EmailField(unique=True)
+
+    def __str__(self):
+        return f"{self.useremail}"
+
+    class Meta:
+        verbose_name_plural = "Sayt Foydalanuvchilar"
+        db_table = "site_user"
