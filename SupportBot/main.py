@@ -9,12 +9,12 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.exceptions import BadRequest
 from aiogram.utils.exceptions import (
     BotBlocked,
     ChatNotFound,
-    UserDeactivated, BadRequest,
-)
+    UserDeactivated, )
 from aiogram.utils.exceptions import TelegramAPIError
 from aiohttp.client_exceptions import ClientConnectorError
 from dotenv import load_dotenv, find_dotenv
@@ -145,41 +145,49 @@ async def send_welcome(message: types.Message):
 async def about_command(message: types.Message):
     # Assuming `conn` is your database connection and `c` is the cursor
     c.execute(
-        "SELECT  full_name, date, age, info, image, resume_link, github_link, portfolio_link, linkedin_link, "
+        "SELECT full_name, date, age, info, image, resume_link, github_link, portfolio_link, linkedin_link, "
         "instagram_link, telegram_link FROM about"
     )
     about_info = c.fetchone()
+
     if about_info:
         about_message = (
             f"Full Name: {about_info['full_name']}\n"
             f"Date: {about_info['date']}\n"
             f"Age: {about_info['age']}\n"
             f"Info: {about_info['info']}\n"
-            f"Resume Link: {about_info['resume_link']}\n"
-            f"Github Link: {about_info['github_link']}\n"
-            f"Portfolio Link: {about_info['portfolio_link']}\n"
-            f"Linkedin Link: {about_info['linkedin_link']}\n"
-            f"Instagram Link: {about_info['instagram_link']}\n"
-            f"Telegram Link: {about_info['telegram_link']}"
         )
+        about_keyboard = InlineKeyboardMarkup(row_width=2)  # Adjust row_width as needed
+        resume = InlineKeyboardButton(
+            "Resume Link", url=about_info['resume_link'] if about_info['resume_link'] else "https://example.com"
+        )
+        github = InlineKeyboardButton("Github Link", url=about_info['github_link'])
+        portfolio = InlineKeyboardButton("Portfolio Link", url=about_info['portfolio_link'])
+        linkedin = InlineKeyboardButton("Linkedin Link", url=about_info['linkedin_link'])
+        instagram = InlineKeyboardButton("Instagram Link", url=about_info['instagram_link'])
+        telegram = InlineKeyboardButton("Telegram Link", url=about_info['telegram_link'])
+        about_keyboard.add(resume, github, portfolio, linkedin, instagram, telegram)
 
-        # Send the message with a photo if an image URL exists
-        if "image" in about_info and about_info["image"]:
+        if about_info.get('image'):
             try:
-                await bot.send_photo(
-                    chat_id=message.chat.id,
-                    photo=about_info["image"],
-                    caption=about_message,
-                    parse_mode="Markdown",
-                )
+                rasm = os.path.join(os.path.dirname(__file__), f"../media/{about_info['image']}")
+
+                with open(rasm, 'rb') as photo:
+                    await bot.send_photo(
+                        chat_id=message.chat.id,
+                        photo=photo,
+                        caption=about_message,
+                        reply_markup=about_keyboard,
+                        parse_mode="Markdown"
+                    )
             except BadRequest as e:
-                logging.warning(f"Invalid or inaccessible URL: {about_info['image']}")
+                logging.warning(f"Invalid or inaccessible file: media/about/{about_info['image']}")
                 await bot.send_message(
-                    chat_id=message.chat.id, text=about_message, parse_mode="Markdown"
+                    chat_id=message.chat.id, text=about_message, reply_markup=about_keyboard, parse_mode="Markdown"
                 )
         else:
             await bot.send_message(
-                chat_id=message.chat.id, text=about_message, parse_mode="Markdown"
+                chat_id=message.chat.id, text=about_message, reply_markup=about_keyboard, parse_mode="Markdown"
             )
     else:
         await bot.send_message(
