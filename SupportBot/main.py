@@ -120,6 +120,7 @@ async def send_welcome(message: types.Message):
     conn.commit()
     keyboard = InlineKeyboardMarkup()
     button_website = InlineKeyboardButton("Bizning kanalimiz", url="https://t.me/jakhangir_blog")
+    keyboard.add(button_website)
 
     if user_id in get_admin_ids():
         await message.reply("Salom! Jahongir aka botga xush kelibsiz.")
