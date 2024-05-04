@@ -330,9 +330,13 @@ async def handle_admin_reply(message: types.Message, state: FSMContext):
                     user_id, message.chat.id, message.message_id
                 )  # Send message to user
                 for group_id in get_group_ids():
-                    await bot.send_message(
-                        group_id, "Javobingiz yuborildi."
-                    )  # Send confirmation to admin
+                    try:
+                        await bot.send_message(
+                            group_id, "Javobingiz yuborildi."
+                        )  # Send confirmation to admin
+                    except ChatNotFound:
+                        logging.warning(f"Chat not found for the group {group_id}, removing from group list.")
+                        # Here you could remove the group_id from your database
             else:
                 for group_id in get_group_ids():
                     await bot.send_message(
