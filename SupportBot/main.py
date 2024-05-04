@@ -235,8 +235,9 @@ async def handle_message(message: types.Message):
         for group_id in get_group_ids():
             await bot.send_message(
                 group_id,
-                f"Foydalanuvchi: {user_name}\n" f"Id: [{user_name}](tg://user?id={user_id})\n" f"Xabar: {message_text}",
-                reply_markup=keyboard, parse_mode="Markdown",
+                f"Foydalanuvchi: {user_name}\nId: [{user_name}](tg://user?id={user_id})\nXabar: {message_text}",
+                reply_markup=keyboard,
+                parse_mode="MarkdownV2"
             )
         await message.reply("Xabaringiz qabul qilindi. Javobni kuting.")
     except BotBlocked:
