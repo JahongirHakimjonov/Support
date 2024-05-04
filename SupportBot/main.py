@@ -170,7 +170,7 @@ async def about_command(message: types.Message):
 
         if about_info.get('image'):
             try:
-                base_dir = os.path.dirname(os.path.abspath(__file__))
+                base_dir = os.path.dirname(__file__)
                 image_path = os.path.join(base_dir, f"media/{about_info['image']}")
 
                 with open(image_path, 'rb') as photo:
