@@ -9,6 +9,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.exceptions import (
     BotBlocked,
     ChatNotFound,
@@ -117,14 +118,16 @@ async def send_welcome(message: types.Message):
         )
 
     conn.commit()
+    keyboard = InlineKeyboardMarkup()
+    button_website = InlineKeyboardButton("Bizning kanalimiz", url="https://t.me/jakhangir_blog")
 
     if user_id in get_admin_ids():
         await message.reply("Salom! Jahongir aka botga xush kelibsiz.")
     else:
         await message.reply(
-            "Salom! Talab va takliflaringiz bo‘lsa, ularni yuboring. \nBarcha gapingizni 1ta xabarda yozing.  "
+            f"Salom [{first_name}](tg://user?id={user_id})! Talab va takliflaringiz bo‘lsa, ularni yuboring. \nBarcha gapingizni 1ta xabarda yozing.  "
             "\n\nDiqqat!, xabar faqat tekst ko‘rinishida bo‘lishi kerak. Rasm, video va boshqa formatdagi fayllar "
-            "qabul qilinmaydi."
+            "qabul qilinmaydi.", reply_markup=keyboard, parse_mode="Markdown"
         )
 
 
@@ -235,7 +238,7 @@ async def handle_message(message: types.Message):
         for group_id in get_group_ids():
             await bot.send_message(
                 group_id,
-                f"Foydalanuvchi: {user_name}\nId: [{user_name}](tg://user?id={user_id})\nXabar: {message_text}",
+                f"Foydalanuvchi: {user_name}\nId: {user_id}\nXabar: {message_text}",
                 reply_markup=keyboard,
                 parse_mode="MarkdownV2"
             )
