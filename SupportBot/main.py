@@ -157,7 +157,7 @@ async def about_command(message: types.Message):
             f"Age: {about_info['age']}\n"
             f"Info: {about_info['info']}\n"
         )
-        about_keyboard = InlineKeyboardMarkup(row_width=2)  # Adjust row_width as needed
+        about_keyboard = InlineKeyboardMarkup(row_width=2)
         resume = InlineKeyboardButton(
             "Resume Link", url=about_info['resume_link'] if about_info['resume_link'] else "https://example.com"
         )
