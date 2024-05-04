@@ -14,7 +14,8 @@ from aiogram.utils.exceptions import BadRequest
 from aiogram.utils.exceptions import (
     BotBlocked,
     ChatNotFound,
-    UserDeactivated, )
+    UserDeactivated,
+)
 from aiogram.utils.exceptions import TelegramAPIError
 from aiohttp.client_exceptions import ClientConnectorError
 from dotenv import load_dotenv, find_dotenv
@@ -159,35 +160,56 @@ async def about_command(message: types.Message):
         )
         about_keyboard = InlineKeyboardMarkup(row_width=2)
         resume = InlineKeyboardButton(
-            "Resume Link", url=about_info['resume_link'] if about_info['resume_link'] else "https://example.com"
+            "Resume Link",
+            url=(
+                about_info["resume_link"]
+                if about_info["resume_link"]
+                else "https://example.com"
+            ),
         )
-        github = InlineKeyboardButton("Github Link", url=about_info['github_link'])
-        portfolio = InlineKeyboardButton("Portfolio Link", url=about_info['portfolio_link'])
-        linkedin = InlineKeyboardButton("Linkedin Link", url=about_info['linkedin_link'])
-        instagram = InlineKeyboardButton("Instagram Link", url=about_info['instagram_link'])
-        telegram = InlineKeyboardButton("Telegram Link", url=about_info['telegram_link'])
+        github = InlineKeyboardButton("Github Link", url=about_info["github_link"])
+        portfolio = InlineKeyboardButton(
+            "Portfolio Link", url=about_info["portfolio_link"]
+        )
+        linkedin = InlineKeyboardButton(
+            "Linkedin Link", url=about_info["linkedin_link"]
+        )
+        instagram = InlineKeyboardButton(
+            "Instagram Link", url=about_info["instagram_link"]
+        )
+        telegram = InlineKeyboardButton(
+            "Telegram Link", url=about_info["telegram_link"]
+        )
         about_keyboard.add(resume, github, portfolio, linkedin, instagram, telegram)
 
-        if about_info.get('image'):
+        if about_info.get("image"):
             try:
                 image_path = os.path.join(f"media/{about_info['image']}")
 
-                with open(image_path, 'rb') as photo:
+                with open(image_path, "rb") as photo:
                     await bot.send_photo(
                         chat_id=message.chat.id,
                         photo=photo,
                         caption=about_message,
                         reply_markup=about_keyboard,
-                        parse_mode="Markdown"
+                        parse_mode="Markdown",
                     )
             except BadRequest as e:
-                logging.warning(f"Invalid or inaccessible file: media/about/{about_info['image']}")
+                logging.warning(
+                    f"Invalid or inaccessible file: media/about/{about_info['image']}"
+                )
                 await bot.send_message(
-                    chat_id=message.chat.id, text=about_message, reply_markup=about_keyboard, parse_mode="Markdown"
+                    chat_id=message.chat.id,
+                    text=about_message,
+                    reply_markup=about_keyboard,
+                    parse_mode="Markdown",
                 )
         else:
             await bot.send_message(
-                chat_id=message.chat.id, text=about_message, reply_markup=about_keyboard, parse_mode="Markdown"
+                chat_id=message.chat.id,
+                text=about_message,
+                reply_markup=about_keyboard,
+                parse_mode="Markdown",
             )
     else:
         await bot.send_message(
@@ -253,6 +275,9 @@ async def handle_message(message: types.Message):
     if message.from_user.id in admin_ids_cache:
         return
 
+    if message.text in ["/start", "/about", "/news", "/cancel"]:
+        return
+
     for group_id in group_ids_cache:
         try:
             admins = await bot.get_chat_administrators(group_id)
@@ -288,7 +313,7 @@ async def handle_message(message: types.Message):
             ),
         )
         conn.commit()
-    elif result[0] < 10:
+    elif result[0] < 5:
         # The user can still send messages today, increment the count
         c.execute(
             "UPDATE daily_message SET message_count = message_count + 1 WHERE telegram_id = %s AND message_date = "
@@ -298,7 +323,7 @@ async def handle_message(message: types.Message):
         conn.commit()
     else:
         # The user has reached their daily limit
-        await message.reply("Siz 1 kunda 10ta xabar yuborishingiz mumkin.")
+        await message.reply("Siz 1 kunda 5ta xabar yuborishingiz mumkin.")
         return
 
     # Create inline keyboard
@@ -389,7 +414,9 @@ async def handle_admin_reply(message: types.Message, state: FSMContext):
                             group_id, "Javobingiz yuborildi."
                         )  # Send confirmation to admin
                     except ChatNotFound:
-                        logging.warning(f"Chat not found for the group {group_id}, removing from group list.")
+                        logging.warning(
+                            f"Chat not found for the group {group_id}, removing from group list."
+                        )
                         # Here you could remove the group_id from your database
             else:
                 for group_id in get_group_ids():

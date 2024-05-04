@@ -18,9 +18,7 @@ class HomePageView(FormView):
     def form_valid(self, form):
         useremail = form.cleaned_data.get("useremail")
 
-        SiteUsers.objects.create(
-            useremail=useremail
-        )
+        SiteUsers.objects.create(useremail=useremail)
         messages.success(
             self.request,
             "Ro'yxatdan o'tdingiz, tez orada siz bilan bog'lanishadi. Rahmat!",
