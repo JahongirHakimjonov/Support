@@ -20,7 +20,7 @@ services:
 
   db:
     image: postgres:15-alpine
-    container_name: restaurant_db
+    container_name: support_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
