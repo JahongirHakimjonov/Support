@@ -55,6 +55,7 @@ services:
       - static_volume:/app/staticfiles
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
+      - /var/www/certbot:/var/www/certbot
     logging:
       options:
         max-size: '10m'
@@ -65,7 +66,7 @@ services:
     volumes:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
-      - ./nginx:/etc/nginx/conf.d
+      - /var/www/certbot:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 volumes:
