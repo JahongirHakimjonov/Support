@@ -53,23 +53,11 @@ services:
       - web_service
     volumes:
       - static_volume:/app/staticfiles
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
-      - /var/www/certbot:/var/www/certbot
     logging:
       options:
         max-size: '10m'
         max-file: '3'
 
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
-      - /var/www/certbot:/var/www/certbot
-
 volumes:
   static_volume:
   postgres_data:
-  certbot-etc:
-  certbot-var:
