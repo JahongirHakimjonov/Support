@@ -42,21 +42,6 @@ services:
     depends_on:
       - db
 
-  nginx:
-    build:
-      context: .
-      dockerfile: ./compose/nginx/Dockerfile
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - web_service
-    volumes:
-      - static_volume:/app/staticfiles
-    logging:
-      options:
-        max-size: '10m'
-        max-file: '3'
 
 volumes:
   static_volume:
